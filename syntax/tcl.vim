@@ -1,7 +1,7 @@
 " Vim syntax file for Tcl/tk language
 " Language:	Tcl
 " Maintained:	SM Smithfield <m_smithfield@yahoo.com>
-" Last Change:	01/11/2007 (23:34:12)
+" Last Change:	01/24/2007 (02:11:02)
 " Filenames:    *.tcl
 " Version:      0.4
 " ------------------------------------------------------------------
@@ -17,6 +17,7 @@ elseif exists("b:current_syntax")
 endif
 
 " Highlight Options: restart vim, after changing these options.
+" let s:tcl_highlight_namespace_bold = 1
 " let s:tcl_highlight_bookends = 1
 " let s:tcl_highlight_primary = 1
 " let s:tcl_highlight_expressions = 1
@@ -59,7 +60,7 @@ syn region tclBraces     contained extend keepend matchgroup=Bold start=+\(\\\)\
 syn region tclFoldBraces contained extend keepend fold matchgroup=Bold start=+\(\\\)\@<!{+ end=+}+ skip=+$\|\(\\\)\@<!\\}+ contains=@tclCommandCluster
 syn match  tclSemiColon  contained ";\s*" skipwhite nextgroup=@tclCommandCluster
 syn region tclComment    contained extend start=+^\s*\#+ms=e-1 end=+$+ contains=tclTodo,@tclLContinue,@Spell
-syn region tclComment    contained extend start=+\(;\)\@<=\s*\#+ end=+$+ contains=tclTodo,@tclLContinue,@Spell
+syn region tclComment    contained extend start=+\(;\s*\)\@<=\#+ end=+$+ contains=tclTodo,@tclLContinue,@Spell
 syn region tclCommand	                  start=+[^;]\&.+ skip=+\\$+ end=+;\|$+ contains=@tclCommandCluster
 
 syn match tclStart "\%^\s*#!.*$"
@@ -835,13 +836,17 @@ HiLink tclExpand         Underlined
 " ------------------
 if exists("s:tcl_highlight_primary")
     HiLink tclKeyword        Statement
-    HiLink tclNamespace      Bold
+    HiLink tclNamespace      Statement
     HiLink tclPrimary        Statement
     HiLink tclConditional    Conditional
     HiLink tclRepeat         Repeat
     HiLink tclException      Exception
     HiLink tclLabel          Label
     HiLink tkWidget          Underlined
+endif
+" ------------------
+if exists("s:tcl_highlight_namespace_bold")
+    hi! def link tclNamespace      Bold
 endif
 " ------------------
 if exists("s:tcl_highlight_options")
