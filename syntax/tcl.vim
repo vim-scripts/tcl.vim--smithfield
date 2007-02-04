@@ -1,9 +1,9 @@
 " Vim syntax file for Tcl/tk language
 " Language:	Tcl
 " Maintained:	SM Smithfield <m_smithfield@yahoo.com>
-" Last Change:	01/24/2007 (02:11:02)
+" Last Change:	02/02/2007 (16:33:53)
 " Filenames:    *.tcl
-" Version:      0.4
+" Version:      0.4.5
 " ------------------------------------------------------------------
 " GetLatestVimScripts: 1603 1 :AutoInstall: syntax/tcl.vim
 " ------------------------------------------------------------------
@@ -303,7 +303,7 @@ syn keyword tclLsortOpts contained command index
 syn keyword tclPrimary contained fconfigure skipwhite nextgroup=tclFconfigurePred
 syn region tclFconfigurePred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclFconfigureOptsGroup,@tclStuff
 syn match tclFconfigureOptsGroup contained "-\a\+" contains=tclFconfigureOpts
-syn keyword tclFconfigureOpts contained blocking buffering buffersize encoding eofchar
+syn keyword tclFconfigureOpts contained blocking buffering buffersize encoding eofchar error
 syn match tclFconfigureOptsGroup contained "-\a\+" contains=tclFconfigureOpts
 syn keyword tclFconfigureOpts contained translation
 
@@ -582,7 +582,7 @@ syn keyword tkTk_messageboxOpts contained default detail icon message parent tit
 " tk: Syntax - special case words
 " -------------------------
 syn keyword tkWidgetMenu              contained cascade separator command checkbutton radiobutton
-syn keyword tclSecondary              contained activate addtag bbox canvasx canvasy clone coords curselection dchars delete delta deselect dtag entrycget entryconfigure find flash focus fraction get gettags icursor identify index insert invoke lower move moveto nearest panecget paneconfigure panes post postcascade postscript proxy raise replace sash scale see set toggle type unpost validate yposition
+syn keyword tclSecondary              contained activate addtag bbox canvasx canvasy clone coords curselection dchars delete delta deselect dtag entrycget entryconfigure find flash focus fraction get gettags icursor identify index insert invoke lower move moveto nearest panecget paneconfigure panes post postcascade proxy raise replace sash scale see set toggle type unpost validate yposition
 syn keyword tclSecondary              contained conf[igure] cget skipwhite nextgroup=tkWidgetPredicate
 syn keyword tclSecondary              contained add skipwhite nextgroup=tkWidgetAddPredicate
 syn region tkWidgetPredicate          contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkWidgetOptsGroup,@tclStuff
@@ -676,10 +676,10 @@ syn region tkCanvasPredicate            contained keepend excludenl start=+.+ sk
 syn keyword tkCanvasTagOpts             contained above all below closest enclosed overlapping withtag
 syn keyword tkCanvasPsOpts              contained colormap colormode file fontmap height pageanchor pageheight pagewidth pagex pagey rotate width x y
 syn keyword tkCanvasItemOpts            contained activebackground activebitmap activedash activefill activeforeground activeimage activeoutline activeoutlinestipple activestipple activewidth anchor arrow arrowshape background bitmap capstyle dash dashoffset disabledbackground disabledbitmap disableddash disabledfill disabledforeground disabledimage disabledoutline disabledoutlinestipple disabledstipple disabledwidth extent fill font foreground height image joinstyle justify offset outline outlinestipple smooth splinesteps start state stipple style tag[s] text width window
-syn cluster tkCanvasCluster		contains=tkCanvasItemOpts,tkCanvasTagOpts,tkCanvasPsOpts,tkWidgetOptsGroup
+syn cluster tkCanvasCluster		contains=tkCanvasItemOpts,tkCanvasTagOpts,tkWidgetOptsGroup
 " the create command
 syn keyword tkWidgetCreate              contained create skipwhite nextgroup=tkWidgetCreatePredicate
-syn region tkWidgetCreatePredicate      contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkWidgetCreateCmds
+syn region tkWidgetCreatePredicate      contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkWidgetCreateCmds,@tclStuff
 syn match tkWidgetCreateCommonOptsGroup contained "-\a\+" contains=tkWidgetCreateCommonOpts
 syn keyword tkWidgetCreateCommonOpts    contained activedash activefill activeoutline activeoutlinestipple activestipple activewidth dash dashoffset disableddash disabledfill disabledoutline disabledoutlinestipple disabledstipple disabledwidth fill offset outline outlinestipple state stipple tag[s] width
 syn keyword tkWidgetCreateCmds          contained arc skipwhite nextgroup=tkWidgetCreateArcPred
@@ -716,6 +716,11 @@ syn match tkWidgetCreateWinOptsGroup    contained "-\a\+" contains=tkWidgetCreat
 syn keyword tkWidgetCreateWinOpts       contained anchor height width window
 syn keyword tclSecondary                contained itemconfig[ure] itemcget skipwhite nextgroup=tkCanvasItemConfigurePred
 syn region tkCanvasItemConfigurePred    contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkWidgetCreateArcOpts,tkWidgetCreateBitmapOpts,tkWidgetCreateCommonOpts,tkWidgetCreateImageOpts,tkWidgetCreateLineOpts,tkWidgetCreateOvalOpts,tkWidgetCreatePolyOpts,tkWidgetCreateRectOpts,tkWidgetCreateTextOpts,tkWidgetCreateWinOpts,@tclStuff
+
+" postscript
+syn keyword tclSecondary contained postscript skipwhite nextgroup=tkCanvasPsPred
+syn region tkCanvasPsPred contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkCanvasPsOptsGroup,@tclStuff
+syn match tkCanvasPsOptsGroup contained "-\a\+" contains=tkCanvasPsOpts
 
 " SPECIAL CASE: 
 " , includes -  bitmap photo
