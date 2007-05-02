@@ -1,7 +1,7 @@
 " Vim syntax file for Tcl/tk language
 " Language:	Tcl
 " Maintained:	SM Smithfield <m_smithfield@yahoo.com>
-" Last Change:	02/08/2007 (13:58:07)
+" Last Change:	05/01/2007 (20:03:29)
 " Filenames:    *.tcl
 " Version:      0.5
 " ------------------------------------------------------------------
@@ -34,6 +34,7 @@ let s:tcl_highlight_all = 1
 " let s:tcl_critcl_active = 1
 " let s:tcl_togl_active = 1
 " let s:tcl_itcl_active = 1
+let s:tcl_ttk_active = 1
 
 " one more highlight than the law allows
 if exists("s:tcl_highlight_bookends")
@@ -64,11 +65,11 @@ syn match  tclSemiColon  contained ";\s*" skipwhite nextgroup=@tclCommandCluster
 if exists("s:tcl_comments_ignore_nested_braces")
     syn region tclComment    contained extend keepend start=+^\s*\#+ms=e-1 start=+\([;{]\s*\)\@<=\#+ end="\\\s\+$\|$" skip=+\\$+ contains=tclTodo,@tclLContinue,@Spell
 else
-    syn region tclComment    contained extend keepend start=+^\s*\#+ms=e-1 start=+\([;{]\s*\)\@<=\#+ end="\\\s\+$\|$" skip=+\\$\|\(\\\)\@<!\\}+ end="}"me=e-1 contains=tclTodo,@tclLContinue,@Spell,tclCommentBraces
+    syn region tclComment       contained extend keepend start=+^\s*\#+ms=e-1 start=+\([;{]\s*\)\@<=\#+ end="\\\s\+$\|$" skip=+\\$\|\(\\\)\@<!\\}+ end="}"me=e-1 contains=tclTodo,@tclLContinue,@Spell,tclCommentBraces
     syn region tclCommentBraces contained extend keepend matchgroup=Comment start=+\(\\\)\@<!{+  end=+}+ skip=+$\|\(\\\)\@<!\\}+ 
 endif
 
-syn region tclCommand	                  start=+[^;]\&.+ skip=+\\$+ end=+;\|$+ contains=@tclCommandCluster
+syn region tclCommand start=+[^;]\&.+ skip=+\\$+ end=+;\|$+ contains=@tclCommandCluster
 
 syn match tclStart "\%^\s*#!.*$"
 syn region tclStart start="\%^\s*#!/bin/sh"  end="^\s*exec.*$"
@@ -94,7 +95,7 @@ syn cluster tclCommandCluster contains=@tcltkKeywords,tclWord0,tclComment
 " -------------------------
 " Tcl: Syntax
 " -------------------------
-syn keyword tclKeyword      contained append apply auto_execok auto_import auto_load auto_mkindex auto_qualify auto_reset cd close concat eof eval exit fblocked flush format gets global http incr join lappend lassign lindex linsert llength load lrange lrepeat lreplace lset namespace parray pid pkg_mkIndex proc pwd registry rename return scan set split tclLog tcl_endOfWord tcl_findLibrary tcl_startOfNextWord tcl_startOfPreviousWord tcl_wordBreakAfter tcl_wordBreakBefore tell time unknown upvar variable vwait skipwhite nextgroup=tclPred
+syn keyword tclKeyword      contained append apply auto_execok auto_import auto_load auto_mkindex auto_qualify auto_reset cd close concat eof exit fblocked flush format gets global http incr join lappend lassign lindex linsert llength load lrange lrepeat lreplace lreverse lset namespace parray pid pkg_mkIndex proc pwd registry rename return scan set split tclLog tcl_endOfWord tcl_findLibrary tcl_startOfNextWord tcl_startOfPreviousWord tcl_wordBreakAfter tcl_wordBreakBefore tell time unknown upvar variable vwait skipwhite nextgroup=tclPred
 syn keyword tclMagicName    contained argc argv argv0 auto_index auto_oldpath auto_path env errorCode errorInfo tcl_interactive tcl_libpath tcl_library tlc_patchlevel tcl_pkgPath tcl_platform tcl_precision tcl_rcFileName tcl_rcRsrcName tcl_traceCompile tcl_traceExec tcl_version
 " ------------------
 syn keyword tkKeyword       contained bell bind clipboard console consoleinterp event focus grid pack place tkwait winfo wm
@@ -103,7 +104,7 @@ syn keyword tkDialog        contained chooseColor tk_chooseColor tk_chooseDirect
 syn keyword tkReserved      contained tk_library tk_strictMotif tk_version
 syn keyword tkWidget        contained button canvas checkbutton entry frame image label labelframe listbox menu menubutton message panedwindow radiobutton scale scrollbar spinbox toplevel skipwhite nextgroup=tkWidgetPredicate
 " TODO widgets that are NOT part of tk
-syn keyword tkWidget        contained table mclistbox notebook skipwhite nextgroup=tkWidgetPredicate
+syn keyword tkWidget        contained table mclistbox skipwhite nextgroup=tkWidgetPredicate
 
 syn region tclPred contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=@tclStuff
 
@@ -131,13 +132,13 @@ syn region tclExpression    contained extend start=+[^ {\\]+ skip=+\\$+ end=+}\|
 " this is because matching the whitespace allows the expression to supercede
 " the other regions
 syn region tclExpression    contained keepend extend matchgroup=Bold start=+\s*{+ end=+}+ skip=+$\|\\}+ contains=tclMaths,@tclStuff
-syn keyword tclMaths        contained abs acos asin atan atan2 bool ceil cos cosh double entier exp floor fmod hypot int log log10 max min pow rand round sin sinh sqrt srand tan tanh wide
+syn keyword tclMaths        contained abs acos asin atan atan2 bool ceil cos cosh double entier exp floor fmod hypot int isqrt log log10 max min pow rand round sin sinh sqrt srand tan tanh wide
 syn keyword tclMaths        contained ne eq in ni
 syn match tclMaths          contained "[()^%~<>!=+*\-|&?:/]"
 
 " IF - permits use of if{0} {} commenting idiom
 syn region tclIfComment     contained extend keepend matchgroup=Comment start=+\(\\\)\@<!{+  skip=+$\|\\}+ end=+}+ contains=tclIfComment,tclTodo,@Spell
-syn match tclIfCommentStart contained extend  "\s*{0}" skipwhite nextgroup=tclIfComment
+syn match tclIfCommentStart contained extend  "\s*\(0\|{0}\)" skipwhite nextgroup=tclIfComment
 
 " PROC - proc name hilite AND folding
 syn keyword tclPrimary      contained proc skipwhite nextgroup=tclProcName
@@ -185,7 +186,7 @@ syn keyword tclREClass contained alpha upper lower digit xdigit alnum print blan
 
 " SPECIAL CASE: predicate can contain a command 
 syn region tclListPred contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=@tclCommandCluster
-syn keyword tclPrimary contained list skipwhite nextgroup=tclListPred
+syn keyword tclPrimary contained eval list skipwhite nextgroup=tclListPred
 
 
 " SPECIAL CASE: contains a command and a leve
@@ -251,7 +252,7 @@ syn region tclEncodingCmdsConvertfromPred contained excludenl keepend start=+.+ 
 
 syn keyword tclPrimary contained info skipwhite nextgroup=tclInfoPred
 syn region tclInfoPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclInfoCmds,@tclStuff
-syn keyword tclInfoCmds contained args body cmdcount commands complete default exists functions globals hostname level library loaded locals nameofexecutable patchlevel procs script sharedlibextension tclversion vars skipwhite nextgroup=tclInfoCmdsArgsPred
+syn keyword tclInfoCmds contained args body cmdcount commands complete default exists frame functions globals hostname level library loaded locals nameofexecutable patchlevel procs script sharedlibextension tclversion vars skipwhite nextgroup=tclInfoCmdsArgsPred
 syn region tclInfoCmdsArgsPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=,@tclStuff
 
 syn keyword tclPrimary contained memory skipwhite nextgroup=tclMemoryPred
@@ -267,7 +268,7 @@ syn region tclUpdateCmdsIdletasksPred contained excludenl keepend start=+.+ skip
 syn keyword tclPrimary contained exec skipwhite nextgroup=tclExecPred
 syn region tclExecPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclExecOptsGroup,@tclStuff
 syn match tclExecOptsGroup contained "-\a\+" contains=tclExecOpts
-syn keyword tclExecOpts contained keepnewline
+syn keyword tclExecOpts contained keepnewline ignorestderr
 
 syn keyword tclPrimary contained glob skipwhite nextgroup=tclGlobPred
 syn region tclGlobPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclGlobOptsGroup,@tclStuff
@@ -370,7 +371,7 @@ syn region tclDictCmdsFilterPred contained excludenl keepend start=+.+ skip=+\\$
 
 syn keyword tclPrimary contained chan skipwhite nextgroup=tclChanPred
 syn region tclChanPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclChanCmds,@tclStuff
-syn keyword tclChanCmds contained blocked close create eof event flush gets names postevent seek tell truncate skipwhite nextgroup=tclChanCmdsBlockedPred
+syn keyword tclChanCmds contained blocked close create eof event flush gets names pending postevent seek tell truncate skipwhite nextgroup=tclChanCmdsBlockedPred
 syn region tclChanCmdsBlockedPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=,@tclStuff
 syn match tclChanCmdsConfigureOptsGroup contained "-\a\+" contains=tclChanCmdsConfigureOpts
 syn keyword tclChanCmdsConfigureOpts contained blocking buffering buffersize encoding eofchar translation
@@ -425,7 +426,7 @@ syn region tclPackageCmdsPresentPred contained excludenl keepend start=+.+ skip=
 
 syn keyword tclPrimary contained string skipwhite nextgroup=tclStringPred
 syn region tclStringPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclStringCmds,@tclStuff
-syn keyword tclStringCmds contained bytelength first index last length range repeat replace tolower totitle toupper trim trimleft trimright wordend wordstart skipwhite nextgroup=tclStringCmdsBytelengthPred
+syn keyword tclStringCmds contained bytelength first index last length range repeat replace reverse tolower totitle toupper trim trimleft trimright wordend wordstart skipwhite nextgroup=tclStringCmdsBytelengthPred
 syn region tclStringCmdsBytelengthPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=,@tclStuff
 syn match tclStringCmdsCompareOptsGroup contained "-\a\+" contains=tclStringCmdsCompareOpts
 syn keyword tclStringCmdsCompareOpts contained nocase length
@@ -437,7 +438,7 @@ syn keyword tclStringCmds contained map match skipwhite nextgroup=tclStringCmdsM
 syn region tclStringCmdsMapPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclStringCmdsMapOptsGroup,@tclStuff skipwhite nextgroup=tclStringCmds
 syn match tclStringCmdsIsClassAlnumOptsGroup contained "-\a\+" contains=tclStringCmdsIsClassAlnumOpts
 syn keyword tclStringCmdsIsClassAlnumOpts contained strict failindex
-syn keyword tclStringCmdsIsClass contained alnum alpha ascii boolean control digit double false graph integer lower print punct space true upper wideinteger wordchar xdigit skipwhite nextgroup=tclStringCmdsIsClassAlnumPred
+syn keyword tclStringCmdsIsClass contained alnum alpha ascii boolean control digit double false graph integer list lower print punct space true upper wideinteger wordchar xdigit skipwhite nextgroup=tclStringCmdsIsClassAlnumPred
 syn region tclStringCmdsIsClassAlnumPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclStringCmdsIsClassAlnumOptsGroup,@tclStuff skipwhite nextgroup=tclStringCmdsIsClass
 syn keyword tclStringCmds contained is skipwhite nextgroup=tclStringCmdsIsPred
 syn region tclStringCmdsIsPred contained excludenl keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tclStringCmdsIsClass,@tclStuff skipwhite nextgroup=tclStringCmds
@@ -621,7 +622,7 @@ syn keyword tkSendOpts contained async displayof
 " tk: Syntax - special case words
 " -------------------------
 syn keyword tkWidgetMenu              contained cascade separator command checkbutton radiobutton
-syn keyword tclSecondary              contained activate addtag bbox canvasx canvasy clone coords curselection dchars delete delta deselect dtag entrycget entryconfigure find flash focus fraction get gettags icursor identify index insert invoke lower move moveto nearest panecget paneconfigure panes post postcascade proxy raise replace sash scale see set toggle type unpost validate yposition
+syn keyword tclSecondary              contained activate addtag bbox canvasx canvasy clone coords curselection dchars delete delta deselect dtag entrycget entryconfigure find flash focus fraction get gettags icursor identify index insert invoke lower move moveto nearest panecget paneconfigure panes post postcascade proxy raise replace sash scale see set toggle type unpost validate xposition yposition
 syn keyword tclSecondary              contained conf[igure] cget skipwhite nextgroup=tkWidgetPredicate
 syn keyword tclSecondary              contained add skipwhite nextgroup=tkWidgetAddPredicate
 syn region tkWidgetPredicate          contained keepend start=+.+ skip=+\\$+ end=+}\|]\|;\|$+ contains=tkWidgetOptsGroup,@tclStuff
@@ -840,6 +841,10 @@ endif
 
 if exists("s:tcl_itcl_active")
     runtime! syntax/tcl_itcl.vim
+endif
+
+if exists("s:tcl_ttk_active")
+    runtime! syntax/tcl_ttk.vim
 endif
 
 " -------------------------
