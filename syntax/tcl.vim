@@ -17,27 +17,71 @@ elseif exists("b:current_syntax")
 endif
 
 " Highlight Options: restart vim, after changing these options.
-" let s:tcl_highlight_namespace_bold = 1
-" let s:tcl_highlight_bookends = 1
-" let s:tcl_highlight_primary = 1
-" let s:tcl_highlight_expressions = 1
-" let s:tcl_highlight_variables = 1
-" let s:tcl_highlight_secondary = 1
-" let s:tcl_highlight_options = 1
-" let s:tcl_highlight_lcs_are_warnings = 1
-" let s:tcl_comments_ignore_nested_braces = 1
-let s:tcl_highlight_all = 1
+if !exists("g:tcl_highlight_all")
+   let g:tcl_highlight_all = 1
+endif
+if g:tcl_highlight_all == 1
+   let g:tcl_highlight_namespace_bold = 1
+   let g:tcl_highlight_bookends = 1
+   let g:tcl_highlight_primary = 1
+   let g:tcl_highlight_expressions = 1
+   let g:tcl_highlight_variables = 1
+   let g:tcl_highlight_secondary = 1
+   let g:tcl_highlight_options = 1
+   let g:tcl_highlight_lcs_are_warnings = 1
+   let g:tcl_comments_ignore_nested_braces = 1
+else  
+   if !exists("g:tcl_highlight_namespace_bold")
+      let g:tcl_highlight_namespace_bold = 0
+   endif
+   if !exists("g:tcl_highlight_bookends")
+      let g:tcl_highlight_bookends = 0
+   endif
+   if !exists("g:tcl_highlight_primary")
+      let g:tcl_highlight_primary = 0
+   endif
+   if !exists("g:tcl_highlight_expressions")
+      let g:tcl_highlight_expressions = 0
+   endif
+   if !exists("g:tcl_highlight_variables")
+      let g:tcl_highlight_variables = 0
+   endif
+   if !exists("g:tcl_highlight_secondary")
+      let g:tcl_highlight_secondary = 0
+   endif
+   if !exists("g:tcl_highlight_options")
+      let g:tcl_highlight_options = 0
+   endif
+   if !exists("g:tcl_highlight_lcs_are_warnings")
+      let g:tcl_highlight_lcs_are_warnings = 0
+   endif
+   if !exists("g:tcl_comments_ignore_nested_braces")
+      let g:tcl_comments_ignore_nested_braces = 0
+   endif
+endif
 
 " Extended Syntax:
-" let s:tcl_snit_active = 1
-" let s:tcl_sqlite_active = 1
-" let s:tcl_critcl_active = 1
-" let s:tcl_togl_active = 1
-" let s:tcl_itcl_active = 1
-let s:tcl_ttk_active = 1
+if !exists("g:tcl_ttk_active")
+   let g:tcl_ttk_active = 1
+endif
+if !exists("g:tcl_snit_active")
+   let g:tcl_snit_active = 0
+endif
+if !exists("g:tcl_sqlite_active")
+   let g:tcl_sqlite_active = 0
+endif
+if !exists("g:tcl_critcl_active")
+   let g:tcl_critcl_active = 0
+endif
+if !exists("g:tcl_togl_active")
+   let g:tcl_togl_active = 0
+endif
+if !exists("g:tcl_itcl_active")
+   let g:tcl_itcl_active = 0
+endif
 
 " one more highlight than the law allows
-if exists("s:tcl_highlight_bookends")
+if g:tcl_highlight_bookends
     if !hlexists("Bold")
         hi Bold guifg=fg guibg=bg gui=bold
         if version > 700
@@ -62,7 +106,7 @@ syn region tclBrackets   contained extend keepend matchgroup=Bold start=+\(\\\)\
 syn region tclBraces     contained extend keepend matchgroup=Bold start=+\(\\\)\@<!{+  end=+}+ skip=+$\|\(\\\)\@<!\\}+ contains=@tclCommandCluster,tclComment
 syn region tclFoldBraces contained extend keepend fold matchgroup=Bold start=+\(\\\)\@<!{+ end=+}+ skip=+$\|\(\\\)\@<!\\}+ contains=@tclCommandCluster
 syn match  tclSemiColon  contained ";\s*" skipwhite nextgroup=@tclCommandCluster
-if exists("s:tcl_comments_ignore_nested_braces")
+if g:tcl_comments_ignore_nested_braces
     syn region tclComment    contained extend keepend start=+^\s*\#+ms=e-1 start=+\([;{]\s*\)\@<=\#+ end="\\\s\+$\|$" skip=+\\$+ contains=tclTodo,@tclLContinue,@Spell
 else
     syn region tclComment       contained extend keepend start=+^\s*\#+ms=e-1 start=+\([;{]\s*\)\@<=\#+ end="\\\s\+$\|$" skip=+\\$\|\(\\\)\@<!\\}+ end="}"me=e-1 contains=tclTodo,@tclLContinue,@Spell,tclCommentBraces
@@ -86,7 +130,11 @@ syn cluster tclBits            contains=tclBraces,tclBrackets,tclComment,tclExpa
 syn cluster tclStuff           contains=@tclBits,tclVariable,tkBindSubstGroup,tkWidgetName,tclREClassGroup
 syn cluster tclWord0Cluster    contains=@tclStuff
 syn cluster tclWord1Cluster    contains=tclWord1,tclSecondary,tkWidgetCreate,tclConditional,@tclStuff
-syn cluster tclQuotesCluster   contains=tclSpecial,@tclLContinue,@Spell
+if g:tcl_highlight_variables
+   syn cluster tclQuotesCluster   contains=tclSpecial,@tclLContinue,@Spell,tclVariable,tclBrackets
+else
+   syn cluster tclQuotesCluster   contains=tclSpecial,@tclLContinue,@Spell
+endif
 syn cluster tclLContinue       contains=tclLContinueOk,tclLContinueError
 syn cluster tclCommandCluster contains=@tcltkKeywords,tclWord0,tclComment
 
@@ -167,7 +215,7 @@ syn region tclVariable      contained start=+\$\(\(:\{2,}\)\?\([[:alnum:]_]*::\)
 syn match tclVariable       contained extend "${[^}]*}"
 syn match tclSpecial        contained "\\\d\d\d\=\|\\."
 syn match tkWidgetName      contained "\([[:alnum:]]\)\@<!\.[[:alpha:]][[:alnum:]]*\(\.[[:alpha:]][[:alnum:]]*\)*\>"
-if exists("s:tcl_highlight_lcs_are_warnings")
+if g:tcl_highlight_lcs_are_warnings
     syn match tclLContinueOk    contained "\\$"
 else
     syn match tclLContinueOk    contained "\\$" transparent
@@ -823,44 +871,35 @@ syn keyword tkWidget           contained listbox skipwhite nextgroup=tkWidgetPre
 " Tcl: Packages
 " ------------------------- 
 
-if exists("s:tcl_snit_active")
+if g:tcl_snit_active
     runtime! syntax/tcl_snit.vim
 endif
 
-if exists("s:tcl_sqlite_active")
+if g:tcl_sqlite_active
     runtime! syntax/tcl_sqlite.vim
 endif
 
-if exists("s:tcl_critcl_active")
+if g:tcl_critcl_active
     runtime! syntax/tcl_critcl.vim
 endif
 
-if exists("s:tcl_togl_active")
+if g:tcl_togl_active
     runtime! syntax/tcl_togl.vim
 endif
 
-if exists("s:tcl_itcl_active")
+if g:tcl_itcl_active
     runtime! syntax/tcl_itcl.vim
 endif
 
-if exists("s:tcl_ttk_active")
+if g:tcl_ttk_active
     runtime! syntax/tcl_ttk.vim
 endif
 
 " -------------------------
 
-if exists("s:tcl_highlight_all")
-    let s:tcl_highlight_bookends = 1
-    let s:tcl_highlight_primary = 1
-    let s:tcl_highlight_secondary = 1
-    let s:tcl_highlight_variables = 1
-    let s:tcl_highlight_options = 1
-    let s:tcl_highlight_expressions = 1
-endif
-
-if version >= 508 || !exists("s:did_tcl_syn_inits")
+if version >= 508 || !exists("g:did_tcl_syn_inits")
     if version <= 508
-        let s:did_tcl_syn_inits = 1
+        let g:did_tcl_syn_inits = 1
         command -nargs=+ HiLink hi link <args>
     else
         command -nargs=+ HiLink hi def link <args>
@@ -886,7 +925,7 @@ HiLink tclExpand         Underlined
 HiLink tclREClassGroup   Special
 HiLink tclREClass        Special
 " ------------------
-if exists("s:tcl_highlight_primary")
+if g:tcl_highlight_primary
     HiLink tclKeyword        Statement
     HiLink tclNamespace      Statement
     HiLink tclPrimary        Statement
@@ -897,28 +936,28 @@ if exists("s:tcl_highlight_primary")
     HiLink tkWidget          Underlined
 endif
 " ------------------
-if exists("s:tcl_highlight_lcs_are_warnings")
+if g:tcl_highlight_lcs_are_warnings
     hi! def link tclLContinueOk WarningMsg
 endif
 " ------------------
-if exists("s:tcl_highlight_namespace_bold")
+if g:tcl_highlight_namespace_bold
     hi! def link tclNamespace      Bold
 endif
 " ------------------
-if exists("s:tcl_highlight_options")
+if g:tcl_highlight_options
     hi! def link tclOption         PreProc
 endif
 " ------------------
-if exists("s:tcl_highlight_secondary")
+if g:tcl_highlight_secondary
     hi! def link tclSecondary      Type
     hi! def link tclSubcommand     Type
 endif
 " ------------------
-if exists("s:tcl_highlight_variables")
+if g:tcl_highlight_variables
     hi! def link tclVariable       Identifier
 endif
 " ------------------
-if exists("s:tcl_highlight_expressions")
+if g:tcl_highlight_expressions
     hi! def link tclEnsemble       Special
     hi! def link tclMaths          Special
 endif
@@ -1090,10 +1129,11 @@ delcommand HiLink
 " -------------------------
 
 let b:current_syntax = "tcl"
-" override the sync commands from the other syntax files
-syn sync clear
-" syn sync minlines=300
-syn sync fromstart
+" " override the sync commands from the other syntax files
+" syn sync clear
+syn sync minlines=300
+" syn sync fromstart
+syn sync ccomment tclComment 
 
 " -------------------------
 
